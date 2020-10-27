@@ -1,19 +1,43 @@
 
+const os = require('os');
 const path = require('path');
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
-module.exports = {
+const CONSTANTS = require('./constants');
+
+// instead of @babel/polyfill
+require("core-js/stable");
+require("regenerator-runtime/runtime");
+
+require('dotenv').config()
+const HOT_PORT = process.env.HOT_PORT || CONSTANTS.DEF_HOT_PORT
+const API_PORT = process.env.API_PORT || CONSTANTS.DEF_API_PORT
+
+
+let info = {
   entry: {main: './src/index.js'},
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname, 'public'),
-    publicPath: '/',
+    path: path.resolve(__dirname, 'public', 'assets'),
+    publicPath: './assets/',
   },
 
   mode: 'development',
   devtool: 'source-map',
   watchOptions: {
     ignored: /node_modules/
+  },
+
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        commons: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "vendor",
+          chunks: "initial",
+        },
+      },
+    },
   },
 
   module: {
@@ -64,8 +88,37 @@ module.exports = {
   devServer: {
     historyApiFallback: { index: 'public/index.html' },
     contentBase: './public',
-    port: 9000,
+    port: HOT_PORT,
     host: '0.0.0.0',     // allow more than localhost
-    proxy: { '/api/*': 'http://localhost:8081' }   // <- backend
+    proxy: { '/api/*': `http://localhost:${API_PORT}` }   // <- backend
   }
 };
+
+async function configInfo() {
+  let hostname = os.hostname();
+  let host = 'localhost'
+  if (hostname.startsWith('NCL')) {
+     hostname = '0.0.0.0'  // when using localhost accept anything: localhost, 127.0.0.1
+     console.log('******************************************');
+     console.log(`**          Laptop detected             **`);
+     console.log(`** use http://${host}:${info.devServer.port}            **`);
+     console.log(`** expecting API server running on      **`);
+     console.log(`**   ${info.devServer.proxy['/api/*']}              **`);
+     console.log('******************************************');
+     } else {
+    hostname = await fqdnPromise()
+    host = hostname
+    console.log('fqdn:', hostname);
+
+    console.log('*********************************************');
+    console.log(`** use https://${host}:${API_PORT}/ **`);
+    console.log('*********************************************');
+    }
+
+  info.devServer.host = hostname
+
+
+  return info
+}
+
+module.exports = configInfo()
