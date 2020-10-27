@@ -1,4 +1,16 @@
 
+/*
+  needed in package,json for this config
+
+  npm i --save-dev webpack webpack-bundle-analyzer webpack-cli webpack-dev-server
+  npm i --save-dev @babel/core @babel/plugin-proposal-class-properties @babel/plugin-proposal-object-rest-spread
+  npm i --save-dev @babel/preset-env @babel/preset-react babel-loader
+  npm i --save-dev core-js css-loader regenerator-runtime sass sass-loader style-loader
+
+  npm i --save react react-dom dotenv
+  }
+*/
+
 const os = require('os');
 const path = require('path');
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
@@ -6,8 +18,8 @@ const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPl
 const CONSTANTS = require('./constants');
 
 // instead of @babel/polyfill
-require("core-js/stable");
-require("regenerator-runtime/runtime");
+// require("core-js/stable");
+// require("regenerator-runtime/runtime");
 
 require('dotenv').config()
 const HOT_PORT = process.env.HOT_PORT || CONSTANTS.DEF_HOT_PORT
@@ -27,6 +39,8 @@ let info = {
   watchOptions: {
     ignored: /node_modules/
   },
+
+  stats: 'minimal',     // 'errors-only', default 'normal'
 
   optimization: {
     splitChunks: {
@@ -82,7 +96,7 @@ let info = {
   },
 
   plugins: [
-    // new BundleAnalyzerPlugin()       uncomment if you want to see graphs of sizes, runs continually
+    // new BundleAnalyzerPlugin()       // uncomment if you want to see graphs of sizes, runs continually
   ],
 
   devServer: {

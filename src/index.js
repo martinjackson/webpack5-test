@@ -11,28 +11,37 @@ const marginStyle = {
   margin: "20px",
 };
 
-const marginStyle2 = {
-margin: "20px",
+const welcomeStyle = {
+margin: "21px",
 //  textAlign: "right",
 };
 
-const divStyle = {
+const topStyle = {
 display: "flex",
 flexDirection: "row",
 justifyContent: "space-between"
 }
+
+const centerStyle = {
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between"
+  }
 
 const username = 'MartinJackson'
 
 const App = () => {
   const [show, setShow] = useState(false);
 
-  return (
-              <div style={divStyle}>
+  return (<>
+              <div style={topStyle}>
                   <img src={logo} style={marginStyle} />
-                  <h2 style={marginStyle2}>{'Welcome: ' + username}</h2>
+                  <h2 style={welcomeStyle}>{'Welcome: ' + username}</h2>
               </div>
-        )
+              <div style={topStyle}>
+                  <p>This is some text</p>
+              </div>
+        </>)
 }
 
 
