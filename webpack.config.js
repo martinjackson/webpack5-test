@@ -1,16 +1,4 @@
 
-/*
-  needed in package,json for this config
-
-  npm i --save-dev webpack webpack-bundle-analyzer webpack-cli webpack-dev-server
-  npm i --save-dev @babel/core @babel/plugin-proposal-class-properties @babel/plugin-proposal-object-rest-spread
-  npm i --save-dev @babel/preset-env @babel/preset-react babel-loader
-  npm i --save-dev core-js css-loader regenerator-runtime sass sass-loader style-loader
-
-  npm i --save react react-dom dotenv
-  }
-*/
-
 const os = require('os');
 const path = require('path');
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
@@ -25,13 +13,11 @@ require('dotenv').config()
 const HOT_PORT = process.env.HOT_PORT || CONSTANTS.DEF_HOT_PORT
 const API_PORT = process.env.API_PORT || CONSTANTS.DEF_API_PORT
 
-
 let info = {
   entry: {main: './src/index.js'},
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname, 'public', 'assets'),
-    publicPath: './assets/',
+    path: path.resolve(__dirname, 'public', 'assets'),  // where webpack bundles are built
   },
 
   mode: 'development',
@@ -101,10 +87,11 @@ let info = {
 
   devServer: {
     historyApiFallback: { index: 'public/index.html' },
-    contentBase: './public',
+    publicPath: "/assets/",   // where in-memory webpack output is served from instead of files
+    contentBase: path.resolve(__dirname, 'public'),   // all other content is served from files here
     port: HOT_PORT,
     host: '0.0.0.0',     // allow more than localhost
-    proxy: { '/api/*': `http://localhost:${API_PORT}` }   // <- backend
+    proxy: {  '/api/*': `http://localhost:${API_PORT}`,  }   // <- backend
   }
 };
 
